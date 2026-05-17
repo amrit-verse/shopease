@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiGetProduct, type Product } from "../api/products";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
+import ImageWithFallback from "../components/ImageWithFallback";
+import { formatCurrency } from "../utils/formatCurrency";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,17 +52,12 @@ export default function ProductDetailPage() {
       </Link>
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden aspect-square">
-          {product.image ? (
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              No image
-            </div>
-          )}
+          <ImageWithFallback
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
         </div>
         <div className="flex flex-col">
           <span className="text-xs uppercase tracking-wider text-gray-400">
@@ -70,7 +67,7 @@ export default function ProductDetailPage() {
             {product.name}
           </h1>
           <p className="mt-2 text-2xl font-semibold text-indigo-700">
-            ${product.price.toFixed(2)}
+            {formatCurrency(product.price)}
           </p>
           <p className="mt-4 text-gray-700 leading-relaxed whitespace-pre-line">
             {product.description || "No description provided."}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { apiMyOrders, type Order, ORDER_STATUS_STEPS, type OrderStatus } from "../api/orders";
+import { formatCurrency } from "../utils/formatCurrency";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 const STATUS_ICONS: Record<string, string> = {
   "Order Placed": "📦",
@@ -100,7 +102,7 @@ function OrderCard({ order, highlight }: { order: Order; highlight?: boolean }) 
           <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}>
             {STATUS_ICONS[order.status]} {order.status}
           </span>
-          <span className="font-semibold text-gray-900">${order.totalAmount.toFixed(2)}</span>
+          <span className="font-semibold text-gray-900">{formatCurrency(order.totalAmount)}</span>
           <button
             onClick={() => setExpanded((v) => !v)}
             className="text-xs text-indigo-600 hover:underline"
@@ -128,13 +130,18 @@ function OrderCard({ order, highlight }: { order: Order; highlight?: boolean }) 
         {order.items.map((it) => (
           <li key={it.product} className="px-5 py-3 flex items-center gap-3">
             <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-              {it.image && <img src={it.image} alt={it.name} className="w-full h-full object-cover" />}
+              <ImageWithFallback
+                src={it.image}
+                alt={it.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-gray-900 truncate">{it.name}</div>
               <div className="text-xs text-gray-500">Qty {it.qty}</div>
             </div>
-            <div className="text-sm text-gray-700">${(it.price * it.qty).toFixed(2)}</div>
+            <div className="text-sm text-gray-700">{formatCurrency(it.price * it.qty)}</div>
           </li>
         ))}
       </ul>

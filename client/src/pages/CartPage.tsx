@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { formatCurrency } from "../utils/formatCurrency";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 export default function CartPage() {
   const { items, updateQty, removeItem, totalAmount, totalQty, clear } =
@@ -55,17 +57,12 @@ export default function CartPage() {
                 to={`/products/${it.product}`}
                 className="block w-full sm:w-24 h-24 bg-gray-100 rounded-md overflow-hidden flex-shrink-0"
               >
-                {it.image ? (
-                  <img
-                    src={it.image}
-                    alt={it.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                    No image
-                  </div>
-                )}
+                <ImageWithFallback
+                  src={it.image}
+                  alt={it.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </Link>
               <div className="flex-1 flex flex-col">
                 <Link
@@ -75,7 +72,7 @@ export default function CartPage() {
                   {it.name}
                 </Link>
                 <span className="text-sm text-gray-600">
-                  ${it.price.toFixed(2)} each
+                  {formatCurrency(it.price)} each
                 </span>
                 <div className="mt-auto flex items-center justify-between pt-3">
                   <div className="inline-flex items-center border border-gray-300 rounded-md">
@@ -99,7 +96,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-gray-900">
-                      ${(it.price * it.qty).toFixed(2)}
+                      {formatCurrency(it.price * it.qty)}
                     </span>
                     <button
                       onClick={() => {
@@ -122,7 +119,7 @@ export default function CartPage() {
           <div className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between text-gray-700">
               <span>Subtotal</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <span>{formatCurrency(totalAmount)}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>Shipping</span>
@@ -130,7 +127,7 @@ export default function CartPage() {
             </div>
             <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between text-base font-semibold text-gray-900">
               <span>Total</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <span>{formatCurrency(totalAmount)}</span>
             </div>
           </div>
           <button

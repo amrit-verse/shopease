@@ -4,6 +4,8 @@ import {
   apiUpdateProduct, type Product,
 } from "../api/products";
 import { apiMyOrders, apiUpdateOrderStatus, type Order, ORDER_STATUS_STEPS, type OrderStatus } from "../api/orders";
+import ImageWithFallback from "../components/ImageWithFallback";
+import { formatCurrency } from "../utils/formatCurrency";
 
 type Form = {
   name: string; description: string; price: string;
@@ -135,13 +137,18 @@ export default function AdminPage() {
                 {products.map((p) => (
                   <li key={p._id} className="px-5 py-3 flex items-center gap-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                      {p.image && <img src={p.image} alt={p.name} className="w-full h-full object-cover" />}
+                      <ImageWithFallback
+                        src={p.image}
+                        alt={p.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-gray-900 truncate">{p.name}</div>
                       <div className="text-xs text-gray-500">{p.category} · {p.countInStock} in stock</div>
                     </div>
-                    <div className="text-sm font-semibold text-gray-900">${p.price.toFixed(2)}</div>
+                    <div className="text-sm font-semibold text-gray-900">{formatCurrency(p.price)}</div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => startEdit(p)} className="text-sm px-2 py-1 rounded-md border border-gray-300 hover:bg-gray-50">Edit</button>
                       <button onClick={() => handleDelete(p._id)} className="text-sm px-2 py-1 rounded-md border border-red-300 text-red-700 hover:bg-red-50">Delete</button>
@@ -167,7 +174,7 @@ export default function AdminPage() {
                     <span className="mx-2 text-gray-400">·</span>
                     <span>{new Date(o.createdAt).toLocaleDateString()}</span>
                     <span className="mx-2 text-gray-400">·</span>
-                    <span className="font-semibold">${o.totalAmount.toFixed(2)}</span>
+                    <span className="font-semibold">{formatCurrency(o.totalAmount)}</span>
                     {o.trackingId && <span className="ml-2 font-mono text-indigo-600 text-xs">{o.trackingId}</span>}
                   </div>
                   <div className="flex items-center gap-2">
@@ -189,11 +196,16 @@ export default function AdminPage() {
                   {o.items.map((it) => (
                     <li key={it.product} className="px-5 py-2 flex items-center gap-3 text-sm text-gray-700">
                       <div className="w-8 h-8 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                        {it.image && <img src={it.image} alt={it.name} className="w-full h-full object-cover" />}
+                        <ImageWithFallback
+                          src={it.image}
+                          alt={it.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
                       </div>
                       <span className="flex-1 truncate">{it.name}</span>
                       <span className="text-gray-500">×{it.qty}</span>
-                      <span>${(it.price * it.qty).toFixed(2)}</span>
+                      <span>{formatCurrency(it.price * it.qty)}</span>
                     </li>
                   ))}
                 </ul>

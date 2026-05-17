@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { apiCreateOrder, type ShippingAddress } from "../api/orders";
 import { apiCreatePaymentOrder, apiVerifyPayment } from "../api/payment";
+import { formatCurrency } from "../utils/formatCurrency";
 
 declare global {
   interface Window {
@@ -247,7 +248,7 @@ export default function CheckoutPage() {
                     disabled={submitting}
                     className="flex-1 px-5 py-2.5 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:bg-indigo-400 text-sm"
                   >
-                    {submitting ? "Processing…" : "Pay ₹" + totalAmount.toFixed(2) + " with Razorpay"}
+                    {submitting ? "Processing…" : `Pay ${formatCurrency(totalAmount)} with Razorpay`}
                   </button>
                   <button
                     onClick={handleMockPayment}
@@ -275,13 +276,13 @@ export default function CheckoutPage() {
             {items.map((it) => (
               <div key={it.product} className="flex justify-between text-sm text-gray-700">
                 <span className="truncate pr-2">{it.name} × {it.qty}</span>
-                <span>${(it.price * it.qty).toFixed(2)}</span>
+                <span>{formatCurrency(it.price * it.qty)}</span>
               </div>
             ))}
           </div>
           <div className="border-t border-gray-200 pt-3 mt-3 flex justify-between text-base font-semibold text-gray-900">
             <span>Total</span>
-            <span>${totalAmount.toFixed(2)}</span>
+            <span>{formatCurrency(totalAmount)}</span>
           </div>
           <div className="mt-2 text-xs text-gray-500 text-center">Secure checkout powered by Razorpay</div>
         </aside>

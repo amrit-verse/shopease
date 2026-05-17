@@ -101,21 +101,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, [items]);
 
-  return (
-    <CartContext.Provider
-      value={{
-        items,
-        addItem,
-        updateQty,
-        removeItem,
-        clear,
-        totalQty,
-        totalAmount: Math.round(totalAmount * 100) / 100,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const value = useMemo(
+    () => ({
+      items,
+      addItem,
+      updateQty,
+      removeItem,
+      clear,
+      totalQty,
+      totalAmount: Math.round(totalAmount * 100) / 100,
+    }),
+    [items, addItem, updateQty, removeItem, clear, totalQty, totalAmount],
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export const useCart = () => {

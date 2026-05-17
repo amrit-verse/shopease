@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiListProducts, type Product } from "../api/products";
 import ProductCard from "../components/ProductCard";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -8,14 +9,29 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
+  const headingText = useMemo(
+    () => (query ? `Results for "${query}"` : "All products"),
+    [query],
+  );
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
-    apiListProducts(query)
-      .then(setProducts)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+
+    apiListProducts(query, controller.signal)
+      .then((items) => {
+        setProducts(items);
+        setError(null);
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") setError(e.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => controller.abort();
   }, [query]);
 
   return (
@@ -71,9 +87,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {loading && (
-          <div className="text-gray-500 py-8">Loading products…</div>
-        )}
+        {loading && <ProductSkeleton />}
         {error && (
           <div className="rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">
             {error}

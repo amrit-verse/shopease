@@ -10,9 +10,10 @@ export type Product = {
   countInStock: number;
 };
 
-export const apiListProducts = (search = "") =>
+export const apiListProducts = (search = "", signal?: AbortSignal) =>
   apiFetch<Product[]>(
     `/products${search ? `?search=${encodeURIComponent(search)}` : ""}`,
+    { signal },
   );
 
 export const apiGetProduct = (id: string) =>
