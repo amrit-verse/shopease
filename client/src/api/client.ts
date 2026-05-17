@@ -2,7 +2,9 @@
 // api-server artifact, so a relative URL works in dev, prod, and Docker
 // (Docker compose handles the proxy via the same path).
 
-const API_BASE = "/api";
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  "https://shopease-backend-r92q.onrender.com/api";
 
 export type ApiError = { message: string };
 
