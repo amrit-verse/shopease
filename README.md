@@ -1,17 +1,37 @@
 # ShopEase — Full-Stack eCommerce
 
-A production-ready eCommerce app with **product listing, cart, authentication, order tracking, and Razorpay payment integration**.
+A production-ready eCommerce app with **product listing, cart, authentication, order tracking, and Razorpay payment integration**. Optimized for performance with INR currency support, lazy-loaded pages, and robust image handling.
 
 ## Features
 
 - 🛍️ Product catalogue with search & filtering
-- 🛒 Persistent cart
+- 🛒 Persistent cart with INR (₹) currency formatting
 - 🔐 JWT authentication (register / login)
 - 💳 **Razorpay payment integration** (test mode + demo simulate button)
 - 📦 **Order tracking system** with 5-step stepper UI
 - 👤 My Orders page with real-time status display
 - 🔧 Admin dashboard — manage products & update order statuses
 - 🗄️ Works with MongoDB **or** in-memory (zero config demo mode)
+- ⚡ **Performance Optimized**: lazy-loaded route splitting, skeleton loading, image fallback handling
+- 🖼️ Stable product images with Unsplash/Pexels URLs and fallback support
+
+## Recent Improvements
+
+### Currency & Pricing
+- **INR (₹) Support**: All prices are now formatted in Indian Rupees across the frontend (cart, checkout, product cards, orders).
+- Centralized `formatCurrency` utility for consistent formatting.
+
+### Performance Optimizations
+- **Code Splitting**: Heavy pages (Admin, Orders, Checkout) are lazy-loaded with React.lazy + Suspense.
+- **Skeleton Loading**: Product list shows skeleton placeholders while data loads for better UX.
+- **Image Optimization**: 
+  - New `ImageWithFallback` component handles broken/missing images gracefully with a fallback SVG.
+  - Lazy loading (`loading="lazy"`) on all product images for faster initial page load.
+  - Stable image URLs from Unsplash/Pexels with optimized query params (`?auto=format&fit=crop&w=700&q=80`).
+
+### Product Data
+- **Seed Database**: 46 products with matching high-quality images from Unsplash and Pexels.
+- **Image Resilience**: Even if a source image fails, the frontend falls back to a clean placeholder UI.
 
 ## Quick Start
 
@@ -68,13 +88,15 @@ shopease/
 ├── client/          # React + TypeScript + Tailwind (Vite)
 │   └── src/
 │       ├── api/         # fetch wrappers (auth, products, orders, payment)
-│       ├── components/  # Navbar, ProductCard, ProtectedRoute
+│       ├── components/  # Navbar, ProductCard, ProtectedRoute, ImageWithFallback, ProductSkeleton
 │       ├── context/     # Auth, Cart, Toast
-│       └── pages/       # Home, ProductDetail, Cart, Checkout, Orders, Admin
+│       ├── pages/       # Home, ProductDetail, Cart, Checkout, Orders, Admin (lazy-loaded)
+│       └── utils/       # formatCurrency (INR formatting)
 └── server/          # Express + MongoDB (Mongoose) or in-memory
     └── src/
         ├── controllers/ # auth, product, order, payment
         ├── models/      # User, Product, Order
         ├── routes/      # authRoutes, productRoutes, orderRoutes, paymentRoutes
-        └── middleware/  # auth, error
+        ├── middleware/  # auth, error
+        └── seed.js      # 46 demo products with optimized image URLs
 ```
